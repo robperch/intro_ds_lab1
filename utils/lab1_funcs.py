@@ -10,7 +10,7 @@ def count_vars(data):
         args:
             data (dataframe): data that is being analyzed
         returns:
-            res (int): number of columns in data
+            -
     """
 
     res = data.shape[1]
@@ -27,11 +27,28 @@ def count_obs(data):
         args:
             data (dataframe): data that is being analyzed
         returns:
-            res (int): number of rows in data
+            -
     """
 
     res = data.shape[0]
 
     print("Número de observaciones en los datos --> {}".format(res))
+
+    return
+
+
+
+## Counting number of numeric variables
+def count_num_vars(vars_num):
+    """
+    Counting number of numeric variables
+        args:
+            vars_num (list): selection of columns that comply with the data type
+        returns:
+            res (int): number of rows in data
+    """
+
+    print("Número de variables numéricas --> {}".format(len(vars_num)))
+    print("Las variables numéricas son: \n{}".format(vars_num))
 
     return
