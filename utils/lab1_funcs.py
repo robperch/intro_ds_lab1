@@ -14,8 +14,9 @@ def count_vars(data):
     """
 
     res = data.shape[1]
+    print("Número de variables en los datos --> {}".format(res))
 
-    return res
+    return
 
 
 
@@ -29,6 +30,8 @@ def count_obs(data):
             res (int): number of rows in data
     """
 
-    res = df.shape[0]
+    res = data.shape[0]
 
-    return res
+    print("Número de observaciones en los datos --> {}".format(res))
+
+    return
