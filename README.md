@@ -1,6 +1,8 @@
 # Introduction to data science
 ## Laboratory 1
 
+El laboratorio uno consiste en realizar el análisis descriptivo de los datos, así como perfilamiento de cada una de las variables involucradas.
+
 ### Team members
 - Edgar Bazo
 - Mariana Lugo Ibarra
@@ -8,6 +10,8 @@
 - Arturo
 
 ### Datos
+
+Los datos corresponden al consumo de agua de la Ciudad de México. Dicho conjunto de datos puede ser obtenido a través del siguiente [enlace](https://datos.cdmx.gob.mx/explore/dataset/consumo-agua/export/).
 
 A fin de comprender el conjunto de datos, se muestra a continuación el significado de cada una de las variables involucrada en el análisis de datos.
 
