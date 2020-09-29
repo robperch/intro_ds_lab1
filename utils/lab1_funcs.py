@@ -52,3 +52,22 @@ def count_num_vars(vars_num):
     print("Las variables numéricas son: \n{}".format(vars_num))
 
     return
+
+
+
+def geo_transformation(data, variable):
+    """
+    Get the Latitude and Longitude columns from a specific column, 
+    then transform both columns to floats and finally remove the original column
+        args:
+            data (geodataframe): Original data with Geo Point column
+            variable (string): Name of column with longitude and latitude data
+        returns:
+            Geodataframe with columns longitude and latitude
+    """    
+    
+    data[['Latitud','Longitud']] = data.loc[:,variable].str.split(",", expand = True)
+    data[['Latitud','Longitud']] = data[['Latitud','Longitud']].astype('float')
+    data = data.drop(columns = [variable, "Geo Shape"])
+
+    return data
