@@ -89,44 +89,46 @@ def count_unique_obs(data):
     Counting number of unique observations for all variables
         args:
         data (dataframe): data that is being analyzed
-           
+
     """
     return data.nunique()
 
 
 
-def geo_transformation(data, variable):
+def geo_transformation(data, variable_latlong, variable_drop):
     """
     Get the Latitude and Longitude columns from a specific column,
     then transform both columns to floats and finally remove the original column
         args:
             data (geodataframe): Original data with Geo Point column
             variable (string): Name of column with longitude and latitude data
+            variable_drop (string): name of columns that will be dropped.
         returns:
             Geodataframe with columns longitude and latitude
     """
 
-    data[['Latitud','Longitud']] = data.loc[:,variable].str.split(",", expand = True)
+    data[['Latitud','Longitud']] = data.loc[:, variable_latlong].str.split(",", expand = True)
     data[['Latitud','Longitud']] = data[['Latitud','Longitud']].astype('float')
-    data = data.drop(columns = [variable, "Geo Shape"])
+    data = data.drop(columns = [variable_latlong, variable_drop])
 
     return data
 
 
 
-def count_num_vars(vars_num, type_var):
+def count_type_vars(vars_sel, type_var):
     """
     Counting number of (numerical / categorical / text)  variables
         args:
-            vars_num (list): selection of columns that comply with the data type
+            vars_sel (list): selection of columns that comply with the data type
+            xxx
         returns:
-            res (int): number of rows in data
+            p (int): number of rows in data
     """
-    
-    p = len(vars_num)
 
-    print("Número de variables tipo: {} --> {}".format(type_var,p))
-    print("Las variables de tipo {} son: \n{}".format(type_var, vars_num))
+    p = len(vars_sel)
+
+    print("Número de variables tipo {} --> {}".format(type_var,p))
+    print("Las variables de tipo {} son: \n{}".format(type_var, vars_sel))
 
     return p
 
@@ -153,7 +155,7 @@ def clean_col_names(dataframe):
 
     return dataframe
 
-  
+
 ## Data profiling for numeric variables
 def data_profiling_numeric(data, num_vars):
     """
@@ -238,4 +240,3 @@ def data_profiling_numeric(data, num_vars):
 
 
     return
-
