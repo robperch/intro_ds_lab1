@@ -53,6 +53,16 @@ def count_num_vars(vars_num):
 
     return
 
+## Counting number of unique observations for all variables
+def count_unique_obs(data):
+    """
+    Counting number of unique observations for all variables
+        args:
+        data (dataframe): data that is being analyzed
+           
+    """
+    return data.nunique()
+
 
 
 def geo_transformation(data, variable):
