@@ -6,6 +6,33 @@ import pandas as pd
 pd.set_option('display.max_columns', 500)
 
 
+
+
+
+"------------------------------------------------------------------------------------"
+#############
+## Imports ##
+#############
+
+import sys
+
+import pandas as pd
+
+import re
+
+import unicodedata
+
+
+
+
+
+"------------------------------------------------------------------------------------"
+###############
+## Functions ##
+###############
+
+
+
 ## Counting number of variables in data (¿Cuántas variables tenemos?)
 def count_vars(data):
     """
@@ -48,7 +75,7 @@ def count_num_vars(vars_num):
         args:
             vars_num (list): selection of columns that comply with the data type
         returns:
-            res (int): number of rows in data
+            -
     """
 
     print("Número de variables numéricas --> {}".format(len(vars_num)))
@@ -77,6 +104,29 @@ def geo_transformation(data, variable):
 
 
 
+## Transform columns' names to standard format
+def clean_col_names(dataframe):
+    """
+    Transform columns' names to standard format (lowercase, no spaces, no points)
+        args:
+            dataframe (dataframe): df whose columns will be formatted.
+        returns:
+            dataframe (dataframe): df with columns cleaned.
+    """
+
+    ## Definition of cleaning funcitons that will be applied to the columns' names
+    fun1 = lambda x: x.lower() ## convert to lowercase
+    fun2 = lambda x: re.sub("( |¡|!|¿|\?|\.|,|;|:)", "_", x) ## eliminate spaces and punctuation signs for underscore
+    fun3 = lambda x: unicodedata.normalize("NFD", x).encode("ascii", "ignore").decode("utf-8") ## substitute accents for normal letters
+    funcs = [fun1, fun2, fun3]
+
+    ## Applying the defined functions to the columns' names
+    for fun in funcs:
+        dataframe.columns = [fun(col) for col in dataframe.columns]
+
+    return dataframe
+
+  
 ## Data profiling for numeric variables
 def data_profiling_numeric(data, num_vars):
     """
