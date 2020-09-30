@@ -114,6 +114,23 @@ def geo_transformation(data, variable):
 
 
 
+def count_num_vars(vars_num, type_var):
+    """
+    Counting number of (numerical / categorical / text)  variables
+        args:
+            vars_num (list): selection of columns that comply with the data type
+        returns:
+            res (int): number of rows in data
+    """
+    
+    p = len(vars_num)
+
+    print("Número de variables tipo: {} --> {}".format(type_var,p))
+    print("Las variables de tipo {} son: \n{}".format(type_var, vars_num))
+
+    return p
+
+
 ## Transform columns' names to standard format
 def clean_col_names(dataframe):
     """
@@ -221,3 +238,4 @@ def data_profiling_numeric(data, num_vars):
 
 
     return
+
