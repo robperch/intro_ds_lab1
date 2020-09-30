@@ -2,36 +2,6 @@
 
 ## FILE TO STORE FUNCTIONS USED IN LAB_1
 
-import pandas as pd
-pd.set_option('display.max_columns', 500)
-
-
-
-
-
-"------------------------------------------------------------------------------------"
-#############
-## Imports ##
-#############
-
-import sys
-
-import pandas as pd
-
-import re
-
-import unicodedata
-
-
-
-
-
-"------------------------------------------------------------------------------------"
-###############
-## Functions ##
-###############
-
-
 
 ## Counting number of variables in data (¿Cuántas variables tenemos?)
 def count_vars(data):
@@ -75,7 +45,7 @@ def count_num_vars(vars_num):
         args:
             vars_num (list): selection of columns that comply with the data type
         returns:
-            -
+            res (int): number of rows in data
     """
 
     print("Número de variables numéricas --> {}".format(len(vars_num)))
@@ -89,7 +59,8 @@ def count_unique_obs(data):
     Counting number of unique observations for all variables
         args:
         data (dataframe): data that is being analyzed
-
+        returns:
+        number of unique observations for all variables
     """
     return data.nunique()
 
@@ -97,7 +68,7 @@ def count_unique_obs(data):
 
 def geo_transformation(data, variable_latlong, variable_drop):
     """
-    Get the Latitude and Longitude columns from a specific column,
+    Get the Latitude and Longitude columns from a specific column, 
     then transform both columns to floats and finally remove the original column
         args:
             data (geodataframe): Original data with Geo Point column
@@ -112,7 +83,6 @@ def geo_transformation(data, variable_latlong, variable_drop):
     data = data.drop(columns = [variable_latlong, variable_drop])
 
     return data
-
 
 
 def count_type_vars(vars_sel, type_var):
@@ -237,6 +207,13 @@ def data_profiling_numeric(data, num_vars):
     print("-"*75)
     print("-"*75)
     print()
-
-
     return
+
+
+def convert_lower(data, vars_lower):
+    """
+    """
+    for x in vars_lower:
+        data[x]=data[x].str.lower()
+    return data
+
