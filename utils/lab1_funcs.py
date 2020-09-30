@@ -2,6 +2,9 @@
 
 ## FILE TO STORE FUNCTIONS USED IN LAB_1
 
+import pandas as pd
+pd.set_option('display.max_columns', 500)
+
 
 
 
@@ -122,3 +125,89 @@ def clean_col_names(dataframe):
         dataframe.columns = [fun(col) for col in dataframe.columns]
 
     return dataframe
+
+  
+## Data profiling for numeric variables
+def data_profiling_numeric(data, num_vars):
+    """
+    Data profiling for numeric variables
+        Args:
+            -
+        Retruns:
+            -
+    """
+
+    ## Copy of initial dataframe to select only numerical columns
+    dfx = data.loc[:, num_vars]
+
+
+    ## Pipeline to create dataframe with general data description
+    print("*********************************")
+    print("** General description of data **")
+    print("*********************************")
+
+    #### List where the resulting dataframes will be stored for further concatenation
+    res_dfs = []
+
+    #### Type of numeric variables
+    dfx_dtype = dfx.dtypes.to_frame().T
+    dfx_dtype.index = ["dtype"]
+    res_dfs.append(dfx_dtype)
+
+    #### Counting unique variables
+    dfx_uniqvars = dfx.nunique().to_frame().T
+    dfx_uniqvars.index = ["count_unique"]
+    res_dfs.append(dfx_uniqvars)
+
+    #### Counting missing values
+    dfx_missing = dfx.isnull().sum().to_frame().T
+    dfx_missing.index = ["missing_v"]
+    res_dfs.append(dfx_missing)
+
+    #### General description of the data and addition of min values
+    dfx_desc = dfx.describe()
+    dfx_desc.loc["min", :] = dfx.min(axis=0)
+    res_dfs.append(dfx_desc)
+
+    #### Concatenating resulting dataframes into one final result
+    print(display(pd.concat(res_dfs, axis=0)))
+    print("-"*75)
+    print("-"*75)
+    print("\n\n".format())
+
+
+    ## Pipeline to obtain top repeated variables per column
+    print("****************************")
+    print("** Top repeated variables **")
+    print("****************************")
+
+    #### Initial variables
+    tops = 5 #### Number of tops that will be selected
+    i = 0 #### Counter to start joining dataframes
+
+    #### Loop through all variables that will be processed
+    for col_sel in dfx:
+
+        #### Creating dataframe with top entries and count
+        dfxx = dfx[col_sel].value_counts().iloc[:tops].to_frame()
+        dfxx.reset_index(drop=False, inplace=True)
+        dfxx["part"] = round(dfxx[col_sel]/dfx[col_sel].count()*100, 2)
+        dfxx.columns = pd.MultiIndex.from_tuples([(col_sel, tag) for tag in ["value", "count", "part_notnull"]])
+
+        #### Joining all the variables in one final dataframe
+        if i == 0:
+            df_tops = dfxx
+            i += 1
+        else:
+            df_tops = df_tops.join(dfxx)
+
+    ## Fill empty spaces of resulting dataframe and renaming index entries
+    df_tops.fillna("-", inplace=True)
+    df_tops.index = ["top_" + str(i) for i in range(1, df_tops.shape[0] + 1)]
+    print(display(df_tops))
+    print("-"*75)
+    print("-"*75)
+    print()
+
+
+    return
