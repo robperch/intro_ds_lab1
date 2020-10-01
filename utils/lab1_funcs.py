@@ -90,11 +90,12 @@ def geo_transformation(data, variable_latlong, variable_drop):
             Geodataframe with columns longitude and latitude
     """
 
-    data[['Latitud','Longitud']] = data.loc[:, variable_latlong].str.split(",", expand = True)
-    data[['Latitud','Longitud']] = data[['Latitud','Longitud']].astype('float')
+    data[['latitud','longitud']] = data.loc[:, variable_latlong].str.split(",", expand = True)
+    data[['latitud','longitud']] = data[['latitud','longitud']].astype('float')
     data = data.drop(columns = [variable_latlong, variable_drop])
 
     return data
+
 
 
 def count_type_vars(vars_sel, type_var):
