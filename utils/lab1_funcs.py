@@ -174,6 +174,7 @@ def clean_col_names(dataframe):
     return dataframe
 
 
+
 ## Data profiling for numeric variables
 def data_profiling_numeric(data, num_vars):
     """
@@ -260,6 +261,7 @@ def data_profiling_numeric(data, num_vars):
     return
 
 
+
 def convert_lower(data, vars_lower):
     """
      Converting observatios for selected columns into lowercase.
@@ -271,4 +273,26 @@ def convert_lower(data, vars_lower):
     """
     for x in vars_lower:
         data[x]=data[x].str.lower()
+    return data
+
+
+
+## Function to correct selected entries in dataframe
+def correct_selected_entries(data, correction_dict):
+    """
+    Function to correct selected entries in dataframe
+        args:
+            data (dataframe): dataset that contains entries that need to be corrected
+        returns:
+            correction_dict (dictionary): reference to correct bad entries
+                dictionary format:
+                    > keys --> name of the column that has bad entries
+                    > values --> dictionary that contains bad word and required word (e.g. {catt: cat})
+    """
+
+    ## Loop to apply corrections
+    for corr_col in correction_dict:
+        for bad_ent in correction_dict[corr_col]:
+            data[corr_col] = data[corr_col].replace(bad_ent, correction_dict[corr_col][bad_ent])
+
     return data
