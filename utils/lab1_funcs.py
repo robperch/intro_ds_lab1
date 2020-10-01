@@ -3,6 +3,29 @@
 ## FILE TO STORE FUNCTIONS USED IN LAB_1
 
 
+
+
+
+"------------------------------------------------------------------------------"
+#############
+## Imports ##
+#############
+
+## Python libraries
+import pandas as pd
+pd.set_option('display.max_columns', 100)
+
+
+
+
+
+"------------------------------------------------------------------------------"
+###############
+## Functions ##
+###############
+
+
+
 ## Counting number of variables in data (¿Cuántas variables tenemos?)
 def count_vars(data):
     """
@@ -70,7 +93,7 @@ def count_num_vars(vars_num):
 
 def geo_transformation(data, variable_latlong, variable_drop):
     """
-    Get the Latitude and Longitude columns from a specific column, 
+    Get the Latitude and Longitude columns from a specific column,
     then transform both columns to floats and finally remove the original column
         args:
             data (geodataframe): Original data with Geo Point column
@@ -219,11 +242,10 @@ def convert_lower(data, vars_lower):
      Converting observatios for selected columns into lowercase.
         args:
             data (dataframe): data that is being analyzed.
-            vars_lower (list): list of the columns' names in the dataframe that will be changed to lowercase. 
+            vars_lower (list): list of the columns' names in the dataframe that will be changed to lowercase.
         returns:
             data(dataframe): dataframe that is being analyzed with the observations (of the selected columns) in lowercase.
     """
     for x in vars_lower:
         data[x]=data[x].str.lower()
     return data
-
