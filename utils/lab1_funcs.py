@@ -98,6 +98,35 @@ def geo_transformation(data, variable_latlong, variable_drop):
 
 
 
+## Function to print the number of decimals that each of the geo columns have
+def geo_vars_precision(data, geo_vars):
+    """
+    Function to print the number of decimals that each of the geo columns have
+        args:
+            data (dataframe): dataset that contains the geospatial columns (e.g. "latitud" & "longitud")
+            geo_vars (list - strings): list with the names of the geospatial columns (e.g. ["latitud", "longitud"])
+        returns:
+            -
+    """
+
+    ## List where the resulting dataframes will be stored for join
+    list_dfs_res = []
+
+    ## Looop to create precision dataframes and append to list
+    for col in geo_cols:
+        df_geo_decs = df_geotransform[col].astype("str").str.split(pat=".", expand=True).loc[:, 1].str.len().value_counts().to_frame()
+        df_geo_decs.columns = ["No. of entries - " + col]
+        list_dfs_res.append(df_geo_decs)
+
+    ## Joining precision dataframes and printing result
+    dfres = list_dfs_res[0].join(list_dfs_res[1])
+    dfres.index.name = "No. of decimals"
+    print(display(dfres))
+
+    return
+
+
+
 def count_type_vars(vars_sel, type_var):
     """
     Counting number of (numerical / categorical / text)  variables
