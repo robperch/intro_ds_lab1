@@ -113,8 +113,8 @@ def geo_vars_precision(data, geo_vars):
     list_dfs_res = []
 
     ## Looop to create precision dataframes and append to list
-    for col in geo_cols:
-        df_geo_decs = df_geotransform[col].astype("str").str.split(pat=".", expand=True).loc[:, 1].str.len().value_counts().to_frame()
+    for col in geo_vars:
+        df_geo_decs = data[col].astype("str").str.split(pat=".", expand=True).loc[:, 1].str.len().value_counts().to_frame()
         df_geo_decs.columns = ["No. of entries - " + col]
         list_dfs_res.append(df_geo_decs)
 
