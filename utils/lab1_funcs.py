@@ -10,7 +10,7 @@ def count_vars(data):
         args:
             data (dataframe): data that is being analyzed
         returns:
-            -
+             res (int): number of variables in the data
     """
 
     res = data.shape[1]
@@ -27,7 +27,8 @@ def count_obs(data):
         args:
             data (dataframe): data that is being analyzed
         returns:
-            -
+            res (int): number of observations in the data
+
     """
 
     res = data.shape[0]
@@ -35,6 +36,18 @@ def count_obs(data):
     print("Número de observaciones en los datos --> {}".format(res))
 
     return
+
+
+## Counting number of unique observations for all variables
+def count_unique_obs(data):
+    """
+    Counting number of unique observations for all variables
+        args:
+        data (dataframe): data that is being analyzed
+        returns:
+        (series): number of unique observations for all variables
+    """
+    return data.nunique()
 
 
 
@@ -52,17 +65,6 @@ def count_num_vars(vars_num):
     print("Las variables numéricas son: \n{}".format(vars_num))
 
     return
-
-## Counting number of unique observations for all variables
-def count_unique_obs(data):
-    """
-    Counting number of unique observations for all variables
-        args:
-        data (dataframe): data that is being analyzed
-        returns:
-        number of unique observations for all variables
-    """
-    return data.nunique()
 
 
 
@@ -131,9 +133,11 @@ def data_profiling_numeric(data, num_vars):
     """
     Data profiling for numeric variables
         Args:
-            -
+            data(dataframe): dataframe that will be analyzed.
+        num_vars (list): list of variables' names in the dataframe that will be analyzed.
         Retruns:
-            -
+            Dataframe with the data profiling (type, number of observations, mean, sd, quartiles, max, min, unique observations, top 5 repeated observations, number of null variables)
+            of the choosen numeric variables.
     """
 
     ## Copy of initial dataframe to select only numerical columns
@@ -212,6 +216,12 @@ def data_profiling_numeric(data, num_vars):
 
 def convert_lower(data, vars_lower):
     """
+     Converting observatios for selected columns into lowercase.
+        args:
+            data (dataframe): data that is being analyzed.
+            vars_lower (list): list of the columns' names in the dataframe that will be changed to lowercase. 
+        returns:
+            data(dataframe): dataframe that is being analyzed with the observations (of the selected columns) in lowercase.
     """
     for x in vars_lower:
         data[x]=data[x].str.lower()
