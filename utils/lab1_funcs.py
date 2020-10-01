@@ -1,5 +1,5 @@
 # (shebang incomplete) -> bin/???
-
+import pandas as pd
 ## FILE TO STORE FUNCTIONS USED IN LAB_1
 
 
@@ -75,17 +75,23 @@ def count_type_vars(vars_sel, type_var):
     Counting number of (numerical / categorical / text)  variables
         args:
             vars_sel (list): selection of columns that comply with the data type
-            xxx
+            type_var (string): type of variable that is being counted
         returns:
-            p (int): number of rows in data
+            -
     """
 
-    p = len(vars_sel)
+    ## Creating dataframe to print selected variables
+    vars_dict = {i:vars_sel[i-1] for i in range(1, len(vars_sel) + 1)}
+    df_print_vars = pd.DataFrame.from_dict(vars_dict, orient="index")
+    df_print_vars.columns = ["Variable(s)"]
 
-    print("Número de variables tipo {} --> {}".format(type_var,p))
-    print("Las variables de tipo {} son: \n{}".format(type_var, vars_sel))
+    print("Número de variables de tipo {} --> {}".format(type_var, len(vars_sel)))
+    # print("- Las variables de tipo {} son: \n".format(type_var, vars_sel))
+    print(display(df_print_vars))
 
-    return p
+
+    return
+
 
 
 ## Transform columns' names to standard format
