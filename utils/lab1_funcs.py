@@ -1,5 +1,5 @@
 # (shebang incomplete) -> bin/???
-
+import pandas as pd
 ## FILE TO STORE FUNCTIONS USED IN LAB_1
 
 
@@ -51,26 +51,9 @@ def count_unique_obs(data):
 
 
 
-## Counting number of numeric variables
-def count_num_vars(vars_num):
-    """
-    Counting number of numeric variables
-        args:
-            vars_num (list): selection of columns that comply with the data type
-        returns:
-            res (int): number of rows in data
-    """
-
-    print("Número de variables numéricas --> {}".format(len(vars_num)))
-    print("Las variables numéricas son: \n{}".format(vars_num))
-
-    return
-
-
-
 def geo_transformation(data, variable_latlong, variable_drop):
     """
-    Get the Latitude and Longitude columns from a specific column, 
+    Get the Latitude and Longitude columns from a specific column,
     then transform both columns to floats and finally remove the original column
         args:
             data (geodataframe): Original data with Geo Point column
@@ -92,17 +75,23 @@ def count_type_vars(vars_sel, type_var):
     Counting number of (numerical / categorical / text)  variables
         args:
             vars_sel (list): selection of columns that comply with the data type
-            xxx
+            type_var (string): type of variable that is being counted
         returns:
-            p (int): number of rows in data
+            -
     """
 
-    p = len(vars_sel)
+    ## Creating dataframe to print selected variables
+    vars_dict = {i:vars_sel[i-1] for i in range(1, len(vars_sel) + 1)}
+    df_print_vars = pd.DataFrame.from_dict(vars_dict, orient="index")
+    df_print_vars.columns = ["Variable(s)"]
 
-    print("Número de variables tipo {} --> {}".format(type_var,p))
-    print("Las variables de tipo {} son: \n{}".format(type_var, vars_sel))
+    print("Número de variables de tipo {} --> {}".format(type_var, len(vars_sel)))
+    # print("- Las variables de tipo {} son: \n".format(type_var, vars_sel))
+    print(display(df_print_vars))
 
-    return p
+
+    return
+
 
 
 ## Transform columns' names to standard format
@@ -219,11 +208,10 @@ def convert_lower(data, vars_lower):
      Converting observatios for selected columns into lowercase.
         args:
             data (dataframe): data that is being analyzed.
-            vars_lower (list): list of the columns' names in the dataframe that will be changed to lowercase. 
+            vars_lower (list): list of the columns' names in the dataframe that will be changed to lowercase.
         returns:
             data(dataframe): dataframe that is being analyzed with the observations (of the selected columns) in lowercase.
     """
     for x in vars_lower:
         data[x]=data[x].str.lower()
     return data
-
