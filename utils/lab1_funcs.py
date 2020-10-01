@@ -3,6 +3,33 @@ import pandas as pd
 ## FILE TO STORE FUNCTIONS USED IN LAB_1
 
 
+
+
+
+"------------------------------------------------------------------------------"
+#############
+## Imports ##
+#############
+
+## Python libraries
+import pandas as pd
+pd.set_option('display.max_columns', 100)
+
+import re
+
+import unicodedata
+
+
+
+
+
+"------------------------------------------------------------------------------"
+###############
+## Functions ##
+###############
+
+
+
 ## Counting number of variables in data (¿Cuántas variables tenemos?)
 def count_vars(data):
     """
