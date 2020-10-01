@@ -51,26 +51,9 @@ def count_unique_obs(data):
 
 
 
-## Counting number of numeric variables
-def count_num_vars(vars_num):
-    """
-    Counting number of numeric variables
-        args:
-            vars_num (list): selection of columns that comply with the data type
-        returns:
-            res (int): number of rows in data
-    """
-
-    print("Número de variables numéricas --> {}".format(len(vars_num)))
-    print("Las variables numéricas son: \n{}".format(vars_num))
-
-    return
-
-
-
 def geo_transformation(data, variable_latlong, variable_drop):
     """
-    Get the Latitude and Longitude columns from a specific column, 
+    Get the Latitude and Longitude columns from a specific column,
     then transform both columns to floats and finally remove the original column
         args:
             data (geodataframe): Original data with Geo Point column
@@ -219,11 +202,10 @@ def convert_lower(data, vars_lower):
      Converting observatios for selected columns into lowercase.
         args:
             data (dataframe): data that is being analyzed.
-            vars_lower (list): list of the columns' names in the dataframe that will be changed to lowercase. 
+            vars_lower (list): list of the columns' names in the dataframe that will be changed to lowercase.
         returns:
             data(dataframe): dataframe that is being analyzed with the observations (of the selected columns) in lowercase.
     """
     for x in vars_lower:
         data[x]=data[x].str.lower()
     return data
-
