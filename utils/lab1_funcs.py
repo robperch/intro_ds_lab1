@@ -65,6 +65,7 @@ def count_obs(data):
     return
 
 
+
 ## Counting number of unique observations for all variables
 def count_unique_obs(data):
     """
@@ -297,14 +298,14 @@ def correct_selected_entries(data, correction_dict):
 
     return data
 
-   
+
 
 def proporcion(listaVar,n):
     """
     Calculate the data proportion of categorical variables.
         args:
             listaVar (Serie): Serie with unique values of categorical variables
-                               to get use value_counts() into a Serie 
+                               to get use value_counts() into a Serie
             n (int): value of total observation of data set.
         returns:
            newList(list): List with name, count and proportion of each category.
@@ -314,9 +315,8 @@ def proporcion(listaVar,n):
         newList.append([lis[0],lis[1],"{}%".format(round(100*(lis[1]/n),1))])
     return newList
 
-   
- 
- 
+
+
 def data_profiling_categ(data, cat_vars):
     """
     Create the data profiling of categorical variables.
@@ -326,12 +326,12 @@ def data_profiling_categ(data, cat_vars):
         returns:
            display(): display the Dataframes with info.
     """
-    
+
     for val in cat_vars:
         print("*********************************")
         print("Variable Categorica {}".format(val))
         print("*********************************")
-        
+
         catego  = data[val].value_counts()
         totalOb = len(data[val])
         can_Cat = len(catego)
@@ -340,24 +340,24 @@ def data_profiling_categ(data, cat_vars):
         top1    = [catego[0:1].index[0],catego[0:1].values[0]] if can_Cat >= 1 else 0
         top2    = [catego[1:2].index[0],catego[1:2].values[0]] if can_Cat >= 2 else 0
         top3    = [catego[2:3].index[0],catego[2:3].values[0]] if can_Cat >= 3 else 0
-        
-        elemVarCat = { 
+
+        elemVarCat = {
             "Info":val,
             "Num_Registros":[totalOb],
             "Num_de_categorias":[can_Cat],
             "Moda":[moda],
             "Valores_faltantes":[valFal],
-            "Top1":[top1], 
-            "Top2":[top2], 
+            "Top1":[top1],
+            "Top2":[top2],
             "Top3":[top3]
             }
-        
+
         #primerdataframe
         df_catVar = pd.DataFrame(elemVarCat).set_index("Info").T
-        
+
         #mostrar primer data frame
         print(display(df_catVar))
-        
+
         print("Valores de las categorias y sus proporciones")
         #segundodataframe donde se muestra los valores de las categorias su cantidad y su proporción.
         pro = proporcion(catego,totalOb)
