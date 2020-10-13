@@ -19,6 +19,8 @@ import re
 
 import unicodedata
 
+import plotly.express as px
+
 
 
 
@@ -365,4 +367,83 @@ def data_profiling_categ(data, cat_vars):
         #mostrar primer data frame
         print(display(dfProp))
         print("\n\n".format())
+    return
+
+
+
+
+
+"------------------------------------------------------------------------------"
+########################
+## Plotting functions ##
+########################
+
+
+## Function to create bar plots for categorical data
+def barplot_cat(data, col_name, tops=10):
+    """
+    Function to create bar plots for categorical data
+        args:
+            data (dataframe): data table where the column that will be plotted is.
+            col_name (string): name of column that will be plotted.
+            tops (int): number of bars that will be displayed before all others categories are grouped.
+        returns:
+            -
+    """
+
+
+    ## Function parameters
+    work_df = data.copy()
+    group_cats = True
+    other_cats_tag = "Otras_categs"
+
+
+    ## Obtaining dataframe ready for bar-plot
+
+    #### Counting category values
+    work_df.fillna("_faltante_", inplace=True)
+    dfx = work_df[col_name].value_counts().to_frame()
+
+    #### Saving relevant metrics before cuting the df
+    tot_count = dfx[col_name].sum()
+    tot_cats = dfx.shape[0]
+    otras_cats = tot_cats - tops
+
+    #### Evaluate if grouping will take place
+    if tot_cats < tops:
+        group_cats = False
+
+
+    ## Grouping other cats
+    if group_cats == True:
+
+        #### Filtering top entries
+        dfx = dfx[:tops]
+
+        #### Grouping categories out of tops
+        dfx.loc[other_cats_tag, :] = tot_count - dfx[col_name].sum()
+
+
+    ## Crating bar graph
+    fig = px.bar(
+        dfx,
+        x = dfx.index,
+        y = col_name,
+        title = col_name,
+        text = col_name,
+        labels = {
+            "index": ""
+        }
+    )
+
+    fig.show()
+
+
+    #### Printing results of "Otros"
+    if group_cats == True:
+        print("Otras_categs contiene la siguiente información: ")
+        print("    -> {} categorías ({:.2f}%)".format(otras_cats, otras_cats/tot_cats*100))
+        print("    -> su conteo de valores representa el ({:.2f}%) del conteo total".format(dfx.loc[other_cats_tag, col_name]/tot_count*100))
+
+
     return
