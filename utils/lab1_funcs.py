@@ -21,6 +21,10 @@ import unicodedata
 
 import plotly.express as px
 
+import numpy as np
+
+import seaborn as sns
+
 
 
 
@@ -480,7 +484,46 @@ def rugplot_num(data, col_name):
 
 
 
+## Function to create density estimate plot (Distplot)
+def distplot_num(data, col_name, data_to_see):
+    """
+    Function to create density estimate plot (Distplot)
+        args:
+            data (dataframe): table with the column that will be plotted
+            col_name (string): name of column that will be plotted
+            data_to_see (int): percentage of data that will be displayed in the graph (takes values from 0 to 98)
+        returns:
+            -
+    """
 
+
+    ## Copying original data to get working data
+    working_data = data.loc[:, [col_name]].copy()
+
+    ## Adding quantiles to data to select how much data you want to see
+    ntiles = 100
+    working_data["quantile"] = pd.cut(working_data[col_name], ntiles, labels=list(np.linspace(1, ntiles, ntiles)))
+
+    ## Defining the limits of the data that will be displayed
+    if data_to_see <= 98:
+        data_li = int((100 - data_to_see)/2)
+        data_ls = int(100 - (100 - data_to_see)/2)
+    else:
+        data_li = 1
+        data_ls = 100
+
+    ## Filtering data according to limits
+    mask_limits = (working_data["quantile"] > data_li) & (working_data["quantile"] < data_ls)
+    data_filtered = working_data[mask_limits]
+
+
+    ## Creating plot
+    fig = sns.distplot(data_filtered[col_name], hist=False)
+    fig.set_title("Distribución de la variable {}".format(col_name))
+    fig.set_ylabel("")
+
+
+    return
 
 
 
