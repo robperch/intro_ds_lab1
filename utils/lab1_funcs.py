@@ -455,9 +455,10 @@ def rugplot_num(data, col_name):
     """
     Function to create Rugplot (Carpet) of numerical variable
         args:
-            x
+            data (dataframe): table with the column that will be plotted
+            col_name (string): name of column that will be plotted
         returns:
-            x
+            -
     """
 
 
