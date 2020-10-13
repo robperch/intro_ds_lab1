@@ -447,3 +447,67 @@ def barplot_cat(data, col_name, tops=10):
 
 
     return
+
+
+
+## Function to create Rugplot (Carpet) of numerical variable
+def rugplot_num(data, col_name):
+    """
+    Function to create Rugplot (Carpet) of numerical variable
+        args:
+            x
+        returns:
+            x
+    """
+
+
+    ## Creating figure
+    fig = px.histogram(
+        data,
+        x=col_name, y=col_name,
+        marginal="rug"
+    )
+
+    ## Formatting figure
+    fig.update_layout(
+        title = "Distribución de variable {}".format(col_name),
+        xaxis_title = "Valor de la variable",
+        yaxis_title = "",
+    )
+
+    fig.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+"------------------------------------------------------------------------------"
+#################
+## END OF FILE ##
+#################
+"------------------------------------------------------------------------------"
