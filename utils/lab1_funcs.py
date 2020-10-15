@@ -56,6 +56,33 @@ colonia_top_15=["centro",
                 "hipodromo"]
 
 
+keywords = {
+    "prom": {
+        "non": "consumo_prom",
+        "cols_names": {
+            "consumo_prom_dom_prop": "Consumo doméstico",
+            "consumo_prom_mixto_prop": "Consumo mixto",
+            "consumo_prom_no_dom_prop": "Consumo no doméstico"
+        }
+    },
+    "total": {
+        "non": "consumo_total",
+        "cols_names": {
+            "consumo_total_dom_prop": "Consumo doméstico",
+            "consumo_total_mixto_prop": "Consumo mixto",
+            "consumo_total_no_dom_prop": "Consumo no doméstico"
+        }
+    }
+}
+
+
+plot_colors = {
+    "Consumo doméstico": "#636EFA",
+    "Consumo mixto": "#EF553B",
+    "Consumo no doméstico": "#00CC96"
+}
+
+
 
 
 
@@ -798,6 +825,101 @@ def scatter_map(data):
     plt.ioff()
 
 
+
+## Creating graphs to analyze consuption distribution
+def cons_dist_plots(data):
+    """
+    """
+
+
+    dfs = []
+
+    for key in keywords:
+
+        col_sel = [col for col in data.columns if ("consumo" in col) & (key in col) & (col != keywords[key]["non"])]
+        col_sel.append("indice_des")
+
+
+        df_sel = data.loc[:, col_sel]
+        df_sel = df_sel.groupby(["indice_des"]).sum()
+        df_sel["total_sum"] = df_sel.sum(axis=1)
+
+
+        for col in [col for col in df_sel.columns if "total_sum" not in col]:
+            df_sel[col + "_prop"] = df_sel[col]/df_sel["total_sum"]
+            df_sel.drop(col, axis=1, inplace=True)
+        df_sel.drop("total_sum", axis=1, inplace=True)
+        df_sel.rename(columns=keywords[key]["cols_names"], inplace=True)
+
+
+        dfs.append(df_sel)
+
+    fig_avg = go.Figure()
+
+    for col in dfs[0].columns:
+        fig_avg.add_trace(
+            go.Bar(
+                x = dfs[0].index,
+                y = dfs[0][col],
+                name = col,
+                marker_color=plot_colors[col]
+            )
+        )
+
+    fig_avg.update_layout(
+        barmode="stack",
+        title="Distribución del consumo promedio"
+    )
+
+    fig_avg.show()
+
+    fig_tot = go.Figure()
+
+    for col in dfs[1].columns:
+        fig_tot.add_trace(
+            go.Bar(
+                x = dfs[1].index,
+                y = dfs[1][col],
+                name = col,
+                marker_color=plot_colors[col]
+            )
+        )
+
+    fig_tot.update_layout(
+        barmode="stack",
+        title="Distribución del consumo total"
+    )
+
+    fig_tot.show()
+
+
+
+## Total consumption por alcaldía
+def consumoPerAlcaldia(df, tipoConsumo):
+    dffirst = df.groupby(["alcaldia", "indice_des"])["gid"].count().unstack().fillna(1).reset_index()
+    dffirst.columns.name = None
+    df_stat =df.groupby("alcaldia").agg(consumo_total=(tipoConsumo,"max")).reset_index()
+    catego  = df["alcaldia"].value_counts()
+    totalOb = len(df["alcaldia"])
+    pro = proporcion(catego,totalOb)
+    dfProp = pd.DataFrame(pro,columns=['alcaldia', 'frecuencia', 'proporcion'])
+    merL1 = pd.merge(left=dfProp,right=df_stat, how='left', left_on='alcaldia', right_on='alcaldia')
+    merL2 = pd.merge(left=merL1,right=dffirst,
+                 how='left',
+                 left_on='alcaldia',
+                 right_on='alcaldia').sort_values(by=[tipoConsumo],ascending=False)
+    merL2 = merL2.reindex(columns=['alcaldia','frecuencia','proporcion',tipoConsumo,'popular','bajo','medio','alto'])
+
+
+    print(display(merL2))
+
+    sns.set_style("darkgrid")
+    plt.figure(figsize=(13,9))
+    ax = sns.barplot(x="consumo_total", y="alcaldia", data=merL2)
+    ax.set_yticklabels(ax.get_ymajorticklabels(), fontsize = 15)
+    plt.title('Consumo total por Alcaldia')
+
+    return
 
 
 
