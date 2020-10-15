@@ -16,14 +16,44 @@ import pandas as pd
 pd.set_option('display.max_columns', 100)
 
 import re
-
 import unicodedata
-
 import plotly.express as px
-
 import numpy as np
-
 import seaborn as sns
+import probscale
+from scipy import stats
+import sys
+from pandas_profiling import ProfileReport
+import plotly.graph_objects as go
+import plotly.express as px
+import matplotlib.pyplot as plt
+import plotly.figure_factory as ff
+
+
+
+
+
+"------------------------------------------------------------------------------"
+###########################
+## Function's parameters ##
+###########################
+
+
+colonia_top_15=["centro",
+                "agricola oriental",
+                "roma norte",
+                "moctezuma 2a seccion",
+                "jardin balbuena",
+                "doctores",
+                "san felipe de jesus",
+                "roma sur",
+                "obrera",
+                "agricola pantitlan",
+                "morelos",
+                "santa maria de la ribera",
+                "leyes de reforma 3a seccion",
+                "del carmen",
+                "hipodromo"]
 
 
 
@@ -526,6 +556,246 @@ def distplot_num(data, col_name, data_to_see):
     return
 
 
+
+## Function to create histograms
+def histograms_numeric_total(data,col_name):
+    """
+    Function to create histograms
+        args:
+            data (dataframe): data that will be analized
+            col_name (string): name of the column that will be plotted.
+
+        returns:
+            -
+    """
+    fig=px.histogram(data, x=col_name)
+    fig.show()
+
+    return
+
+
+
+## Function to create histograms by response variable.
+def histograms_numeric(data, col_name,name_hue):
+    """
+       Function to create histograms
+        args:
+            data (dataframe): data that will be analized
+            col_name (string): name of the column that will be plotted.
+            name_hue (string): name of the column for hue variable.
+
+        returns:
+            -
+     """
+    data["col_name_new"]=np.log(data[col_name])
+    fig=px.histogram(data, x="col_name_new", color=name_hue, labels={'col_name_new':col_name})
+    fig.update_traces(opacity=.75)
+    #fig.update_xaxes(range=[0,1.5*(data[col_name].quantile(.75)-data[col_name].quantile(.25))])
+    fig.show()
+
+    return
+
+
+
+## Function to create histograms by response variable and categoric variable.
+def histograms_numeric_rv_cat(data, col_name, response_var,cat_var_selec):
+    """
+       Function to create histograms
+        args:
+            data (dataframe): data that will be analized
+            col_name (string): name of the column of the numeric variable that will be plotted.
+            response_var(string): name of the column of the categoric response variable.
+            cat_var_selec(string):name of the column of the categoric variable to be analized.
+        returns:
+            -
+     """
+    g=sns.FacetGrid(data, col=response_var, row=cat_var_selec,margin_titles=True)
+    g.map_dataframe(sns.histplot, x=col_name)
+    #IQR=1.5*(data[col_name].quantile(.75)-data[col_name].quantile(.25))
+    g.set(xlim=(0,10000))
+    g.set_axis_labels(col_name,"Count")
+    g
+
+    return
+
+
+
+def box_plot_num(data,response_var, col_name):
+    """
+       Function to create boxplots for numeric variables.
+        args:
+            data (dataframe): data that will be analized
+            col_name (string): name of the column that will be plotted.
+            response_var(string): name of the column of the categoric response variable.
+
+        returns:
+            -
+     """
+    bp=px.box(data, x=response_var, y=col_name)
+    return bp.show()
+
+
+
+def scatterPlotFacet(df,columnX,columnY,hueName,facetName):
+    """
+    Create the scatter plot of numerical variables.
+        args:
+            df (Data Frame): data set into Dataframe.
+            columnX (str):   name of column into de x axis
+            columnY (str):   name of column into de y axis
+            hueName (str):   name of column for de hue color of plot.
+            facetName (str): name of column for facet spread plots
+        returns:
+           fig.show(): display the de scaterplot.
+    """
+    fig = px.scatter(df, x=columnX, y=columnY, color=hueName, facet_col=facetName)
+    fig.show()
+
+    return
+
+
+
+def corr_plot(data, variables, title):
+    """
+    Function to create the correlation plot of the input variables
+    """
+
+    df_corr = data[variables].corr()
+
+    f, axes = plt.subplots(figsize = (10, 6), gridspec_kw = {'hspace': 1, 'wspace': 0.5})
+    plot = sns.heatmap(df_corr, annot = True, center = 0,
+            xticklabels=df_corr.columns, cmap="YlGnBu",
+            yticklabels=df_corr.columns).set_title(title)
+
+    return plot
+
+
+
+def equality_line(ax, label = None):
+    """
+    Function to add identity line in the qq-plot
+    """
+
+    limits = [
+        np.min([ax.get_xlim(), ax.get_ylim()]),
+        np.max([ax.get_xlim(), ax.get_ylim()]),
+    ]
+    ax.set_xlim(limits)
+    ax.set_ylim(limits)
+    ax.plot(limits, limits, 'k-', alpha = 0.75, zorder = 0, label = label)
+
+
+
+def qq_plot(data, variable, ymin = -np.inf, ymax = np.inf):
+    """
+    Create qq-plot
+    """
+
+    trunc_data = data.loc[(data[variable] >= ymin) & (data[variable] <= ymax), :]
+    val = trunc_data.shape[0]/data.shape[0]
+
+    print("Porcentaje de datos conservado {}".format(val))
+
+    norm = stats.norm(loc = 21, scale = 8)
+    fig, ax = plt.subplots(figsize = (4, 4))
+    ax.set_aspect('equal')
+
+    common_opts = dict(
+        plottype = 'qq',
+        probax = 'x',
+        problabel = 'Theoretical Quantiles',
+        datalabel = 'Emperical Quantiles',
+        scatter_kws = dict(label=variable)
+    )
+
+    fig = probscale.probplot(trunc_data[variable], ax = ax, dist = norm, **common_opts)
+
+    equality_line(ax, label = 'Normal Distribution')
+    ax.legend(loc = 'lower right')
+    sns.despine()
+
+
+
+def box_plot_num_location(data,col_name, alcaldia_selec):
+    """
+       Function to create boxplots for numeric variables.
+        args:
+            data (dataframe): data that will be analized
+            col_name (string): name of the column that will be plotted.
+            alcaldia_selec(string): name of the column of the categoric location variable.
+
+        returns:
+            -
+    """
+    dfx=data[data.alcaldia== alcaldia_selec]
+    bp=px.box(dfx, x="indice_des", y=col_name)
+    return bp.show()
+
+
+
+## Create heatmap
+def create_heatmap(data, col1, col2, count_col):
+    """
+    """
+
+
+    ## Conteo de las observaciones por alcaldía clasificadas por indice de desarrollo
+    dfx = data.copy()
+    dfx2 = dfx.groupby([col1, col2])[count_col].count().unstack().fillna(0)
+
+
+    ## Conversión de valores absoultos a proporcionales
+    dfx2["total"] = dfx2.sum(axis=1)
+    for col in [x for x in dfx2.columns if x != "total"]:
+        dfx2[col + "_part"] = dfx2[col]/dfx2["total"]*100
+        dfx2.drop(col, axis=1, inplace=True)
+    dfx2.drop(["total"], axis=1, inplace=True)
+
+
+    ## Heatmap con los resultados
+    fig = px.imshow(dfx2)
+    fig.update_layout(
+        autosize=False,
+        width=500,
+        height=1000
+    )
+    fig.show()
+
+
+
+## Evaluate consistency in colonia development tags
+def colonia_devidx_consistency(data):
+    """
+    """
+
+
+    ## Grouping and counting by "colonia" and "indice_des"
+    dfx3 = data.groupby(["colonia", "indice_des"])["gid"].count().unstack()
+
+    ## Determining proportion of entries per number of categories
+    dfx3["categs"] = dfx3.notnull().sum(axis=1)
+    dfx3 = dfx3["categs"].value_counts(normalize=True).to_frame()
+
+    ## Adding text column to be more clear
+    dfx3["categs_txt"] = dfx3.index.astype("str") + "_" + "categs"
+
+
+    ## Creating plot
+    fig = px.bar(dfx3, x="categs_txt", y="categs")
+    fig.update_layout(
+        title="Propoción del número de índices de desarrollo por colonia",
+        xaxis_title="Número de categorías en la colonia",
+        yaxis_title=""
+    )
+    fig.show()
+
+
+
+## Creating scatter plot with coordinates
+def scatter_map(data):
+    plt.figure(figsize=(20,20))
+    sns.scatterplot(data.longitud, data.latitud, hue=data.indice_des)
+    plt.ioff()
 
 
 
